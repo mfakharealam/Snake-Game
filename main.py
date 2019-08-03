@@ -44,20 +44,27 @@ def redraw_window(surface):
     pass
 
 
+def random_snack(rows_, items):
+    pass
+
+
 def message_box(subject, content):
     pass
 
 
 def main():
-    pass
+    rows = 20   # should divide 500 evenly
+    width = 500
+    height = 500
 
+    win = pygame.display.set_mode(width, height)
+    snk = Snake((255, 0, 0), (10, 10))
+    flag = True
+    clock = pygame.time.Clock()
+    while flag:
+        pygame.time.delay(50)
+        clock.tick(10)
 
-rows = 0
-width = 0
-height = 0
-
-Cube.rows = rows
-Cube.width = width
 
 main()
 
