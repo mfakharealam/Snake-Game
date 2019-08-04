@@ -37,11 +37,23 @@ class Snake(object):
 
 
 def draw_grid(width_, rows_, surface):
-    pass
+    size_in_bw_grid = width_ // rows_
+    x = 0
+    y = 0
+    for i in range(rows):
+        x = x + size_in_bw_grid
+        y = y + size_in_bw_grid
+        # vertical
+        pygame.draw.line(surface, (255, 255, 255), (x, 0), (x, width_))
+        # horizontal
+        pygame.draw.line(surface, (255, 255, 255), (0, y), (width_, y))
 
 
 def redraw_window(surface):
-    pass
+    global rows, width
+    surface.fill((0, 0, 0))   # black
+    draw_grid(width, rows, surface)
+    pygame.display.update()
 
 
 def random_snack(rows_, items):
@@ -53,17 +65,18 @@ def message_box(subject, content):
 
 
 def main():
+    global rows, width
     rows = 20   # should divide 500 evenly
     width = 500
-    height = 500
 
-    win = pygame.display.set_mode(width, height)
+    win = pygame.display.set_mode((width, width))
     snk = Snake((255, 0, 0), (10, 10))
     flag = True
     clock = pygame.time.Clock()
     while flag:
-        pygame.time.delay(50)
-        clock.tick(10)
+        pygame.time.delay(50)   # ms, lower it is faster the snake
+        clock.tick(10)  # 10 blocks per second/fps, lower it is, slower the snake
+        redraw_window(win)
 
 
 main()
