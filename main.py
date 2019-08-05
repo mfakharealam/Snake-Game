@@ -6,17 +6,32 @@ from tkinter import messagebox
 
 
 class Cube(object):
-    rows = 0
-    width = 0
+    rows = 20
+    width = 500
 
     def __init__(self, start, direction_x=1, direction_y=0, color=(255, 0, 0)):
-        pass
+        self.position = start
+        self.direction_x = 1
+        self.direction_y = 0
+        self.color = color  # for snack
 
     def move(self, direction_x, direction_y):
-        pass
+        self.direction_x = direction_x
+        self.direction_y = direction_y
+        self.position = (self.position[0] + self.direction_x, self.position[1] + self.direction_y)
 
     def draw(self, surface, eyes=False):
-        pass
+        distance = self.width // self.rows
+        i = self.position[0]
+        j = self.position[1]
+        pygame.draw.rect(surface, self.color, (i * distance + 1, j * distance + 1, distance - 2, distance - 2))
+        if eyes:
+            centre = distance // 2
+            radius = 3
+            circle_middle = (i * distance + centre - radius, j * distance + 8)
+            circle_middle_2 = (i * distance + distance - radius * 2, j * distance + 8)
+            pygame.draw.circle(surface, (0, 0, 0), circle_middle, radius)
+            pygame.draw.circle(surface, (0, 0, 0), circle_middle_2, radius)
 
 
 class Snake(object):
@@ -42,22 +57,22 @@ class Snake(object):
                     self.direction_x = -1
                     self.direction_y = 0
                     # current position of head of our snake should be stored in order to move tails towards that dir
-                    self.turns[self.head.positon[:]] = [self.direction_x, self.direction_y]
+                    self.turns[self.head.position[:]] = [self.direction_x, self.direction_y]
 
                 elif keys[pygame.K_RIGHT]:
                     self.direction_x = 1
                     self.direction_y = 0
-                    self.turns[self.head.positon[:]] = [self.direction_x, self.direction_y]
+                    self.turns[self.head.position[:]] = [self.direction_x, self.direction_y]
 
                 elif keys[pygame.K_UP]:
                     self.direction_x = 0
                     self.direction_y = -1
-                    self.turns[self.head.positon[:]] = [self.direction_x, self.direction_y]
+                    self.turns[self.head.position[:]] = [self.direction_x, self.direction_y]
 
                 elif keys[pygame.K_DOWN]:
                     self.direction_x = 0
                     self.direction_y = 1
-                    self.turns[self.head.positon[:]] = [self.direction_x, self.direction_y]
+                    self.turns[self.head.position[:]] = [self.direction_x, self.direction_y]
 
         for i, c in enumerate(self.body):   # for each cube object
             p = c.position[:]
@@ -84,8 +99,12 @@ class Snake(object):
     def add_cube(self):
         pass
 
-    def draw(self):
-        pass
+    def draw(self, surface):
+        for i, c in enumerate(self.body):
+            if i == 0:
+                c.draw(surface, True)
+            else:
+                c.draw(surface)
 
 
 def draw_grid(width_, rows_, surface):
@@ -102,8 +121,9 @@ def draw_grid(width_, rows_, surface):
 
 
 def redraw_window(surface):
-    global rows, width
+    global rows, width, snk
     surface.fill((0, 0, 0))   # black
+    snk.draw(surface)
     draw_grid(width, rows, surface)
     pygame.display.update()
 
@@ -117,7 +137,7 @@ def message_box(subject, content):
 
 
 def main():
-    global rows, width
+    global rows, width, snk
     rows = 20   # should divide 500 evenly
     width = 500
 
@@ -128,6 +148,7 @@ def main():
     while flag:
         pygame.time.delay(50)   # ms, lower it is faster the snake
         clock.tick(10)  # 10 blocks per second/fps, lower it is, slower the snake
+        snk.move()
         redraw_window(win)
 
 
