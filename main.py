@@ -59,13 +59,24 @@ class Snake(object):
                     self.direction_y = 1
                     self.turns[self.head.positon[:]] = [self.direction_x, self.direction_y]
 
-        for i, c in enumerate(self.body):
+        for i, c in enumerate(self.body):   # for each cube object
             p = c.position[:]
             if p in self.turns:
                 turn = self.turns[p]
                 c.move(turn[0], turn[1])
                 if i == len(self.body) - 1:
                     self.turns.pop(p)
+            else:
+                if c.direction_x == -1 and c.position[0] <= 0:  # left
+                    c.position = (c.rows - 1, c.position[1])
+                elif c.direction_x == 1 and c.position[0] >= c.rows - 1:    # right
+                    c.position = (0, c.position[1])
+                elif c.direction_y == 1 and c.position[1] >= c.rows - 1:    # down
+                    c.position = (c.position[0], 0)
+                elif c.direction_y == -1 and c.position[1] <= 0:    # up
+                    c.position = (c.position[0], c.rows - 1)
+                else:   # not on edge of the screen
+                    c.move(c.direction_x, c.direction_y)    # keep moving in same direction
 
     def reset(self):
         pass
