@@ -97,7 +97,19 @@ class Snake(object):
         pass
 
     def add_cube(self):
-        pass
+        tail = self.body[-1]
+        tail_direction_x, tail_direction_y = tail.direction_x, tail.direction_y
+        if tail_direction_x == 1 and tail_direction_y == 0:     # moving right
+            self.body.append(Cube((tail.position[0] - 1, tail.position[1])))
+        elif tail_direction_x == -1 and tail_direction_y == 0:  # moving left
+            self.body.append(Cube((tail.position[0] + 1, tail.position[1])))
+        elif tail_direction_x == 0 and tail_direction_y == 1:   # moving down
+            self.body.append(Cube((tail.position[0], tail.position[1] - 1)))
+        elif tail_direction_x == 0 and tail_direction_y == -1:  # moving up
+            self.body.append(Cube((tail.position[0], tail.position[1] + 1)))
+
+        self.body[-1].direction_x = tail_direction_x
+        self.body[-1].direction_y = tail_direction_y
 
     def draw(self, surface):
         for i, c in enumerate(self.body):
@@ -121,19 +133,19 @@ def draw_grid(width_, rows_, surface):
 
 
 def redraw_window(surface):
-    global rows, width, snk
+    global rows, width, snk, snack
     surface.fill((0, 0, 0))   # black
     snk.draw(surface)
+    snack.draw(surface)
     draw_grid(width, rows, surface)
     pygame.display.update()
 
 
 def random_snack(rows_, items):
-    global rows
     positions = items.body
     while True:
-        x = random.randrange(rows)
-        y = random.randrange(rows)
+        x = random.randrange(rows_)
+        y = random.randrange(rows_)
         if len(list(filter(lambda z: z.position == (x, y), positions))) > 0:
             continue
         else:
@@ -146,18 +158,22 @@ def message_box(subject, content):
 
 
 def main():
-    global rows, width, snk
+    global rows, width, snk, snack
     rows = 20   # should divide 500 evenly
     width = 500
 
     win = pygame.display.set_mode((width, width))
     snk = Snake((255, 0, 0), (10, 10))
     flag = True
+    snack = Cube(random_snack(rows, snk), color=(0, 255, 255))
     clock = pygame.time.Clock()
     while flag:
         pygame.time.delay(50)   # ms, lower it is faster the snake
         clock.tick(10)  # 10 blocks per second/fps, lower it is, slower the snake
         snk.move()
+        if snk.body[0].position == snack.position:  # snake eating the snack
+            snk.add_cube()
+            snack = Cube(random_snack(rows, snk), color=(0, 255, 255))
         redraw_window(win)
 
 
