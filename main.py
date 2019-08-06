@@ -129,7 +129,16 @@ def redraw_window(surface):
 
 
 def random_snack(rows_, items):
-    pass
+    global rows
+    positions = items.body
+    while True:
+        x = random.randrange(rows)
+        y = random.randrange(rows)
+        if len(list(filter(lambda z: z.position == (x, y), positions))) > 0:
+            continue
+        else:
+            break
+    return
 
 
 def message_box(subject, content):
