@@ -150,7 +150,7 @@ def random_snack(rows_, items):
             continue
         else:
             break
-    return
+    return x, y
 
 
 def message_box(subject, content):
@@ -165,7 +165,7 @@ def main():
     win = pygame.display.set_mode((width, width))
     snk = Snake((255, 0, 0), (10, 10))
     flag = True
-    snack = Cube(random_snack(rows, snk), color=(0, 255, 255))
+    snack = Cube(random_snack(rows, snk), color=(0, 255, 0))
     clock = pygame.time.Clock()
     while flag:
         pygame.time.delay(50)   # ms, lower it is faster the snake
@@ -173,7 +173,14 @@ def main():
         snk.move()
         if snk.body[0].position == snack.position:  # snake eating the snack
             snk.add_cube()
-            snack = Cube(random_snack(rows, snk), color=(0, 255, 255))
+            snack = Cube(random_snack(rows, snk), color=(0, 255, 0))
+
+        for x in range(len(snk.body)):  # snake collides with itself
+            if snk.body[x].position in list(map(lambda z: z.position, snk.body[x+1:])):
+                print('Score: ', len(snk.body))
+                message_box()
+                snk.reset((15, 15))
+                break
         redraw_window(win)
 
 
