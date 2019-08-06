@@ -93,8 +93,13 @@ class Snake(object):
                 else:   # not on edge of the screen
                     c.move(c.direction_x, c.direction_y)    # keep moving in same direction
 
-    def reset(self):
-        pass
+    def reset(self, position):
+        self.head = Cube(position)
+        self.body = []
+        self.body.append(self.head)
+        self.turns = {}
+        self.direction_x = 0
+        self.direction_y = 1
 
     def add_cube(self):
         tail = self.body[-1]
@@ -154,7 +159,14 @@ def random_snack(rows_, items):
 
 
 def message_box(subject, content):
-    pass
+    root = tk.Tk()
+    root.attributes("-topmost", True)
+    root.withdraw()
+    messagebox.showinfo(subject, content)
+    try:
+        root.destroy
+    except:
+        pass
 
 
 def main():
@@ -178,7 +190,7 @@ def main():
         for x in range(len(snk.body)):  # snake collides with itself
             if snk.body[x].position in list(map(lambda z: z.position, snk.body[x+1:])):
                 print('Score: ', len(snk.body))
-                message_box()
+                message_box("Lost it!", "Try again...")
                 snk.reset((15, 15))
                 break
         redraw_window(win)
